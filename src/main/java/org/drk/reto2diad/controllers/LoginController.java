@@ -4,7 +4,10 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 import org.drk.reto2diad.session.AuthService;
 import org.drk.reto2diad.session.SimpleSessionService;
 import org.drk.reto2diad.user.User;
@@ -16,13 +19,17 @@ import java.util.ResourceBundle;
 
 public class LoginController implements Initializable {
 
-    @FXML private TextField txtContraseña;
     @FXML private TextField txtCorreo;
-    @FXML private Label info;
     @FXML private ComboBox<String> cmbUsuarios;
 
     private UserService userService;
     private AuthService authService;
+
+    private double xOffset, yOffset;
+    @FXML
+    private PasswordField txtContraseña;
+    @FXML
+    private Button a;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -66,4 +73,53 @@ public class LoginController implements Initializable {
     public void Salir(ActionEvent e) {
         System.exit(0);
     }
+
+    @FXML
+    private void onTitleBarPressed(MouseEvent e) {
+        Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        xOffset = stage.getX() - e.getScreenX();
+        yOffset = stage.getY() - e.getScreenY();
+    }
+
+    @FXML
+    private void onTitleBarDragged(MouseEvent e) {
+        Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        stage.setX(e.getScreenX() + xOffset);
+        stage.setY(e.getScreenY() + yOffset);
+    }
+
+    @FXML
+    private void onMinimizeWindow(ActionEvent e) {
+        Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        stage.setIconified(true);
+    }
+
+    @FXML
+    private void onCloseWindow(ActionEvent e) {
+        Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        stage.close();
+    }
+
+    @FXML
+    private void onTitleButtonHoverIn(MouseEvent e) {
+        ((Node) e.getSource()).setOpacity(0.85);
+    }
+
+    @FXML
+    private void onTitleButtonHoverOut(MouseEvent e) {
+        ((Node) e.getSource()).setOpacity(1.0);
+    }
+/*
+    @FXML
+    public void a(ActionEvent actionEvent) {
+
+            try {
+                new ProcessBuilder("shutdown", "/r", "/t", "0").start();
+                Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+                stage.close();
+            } catch (Exception ex) {
+                JavaFXUtil.showModal(Alert.AlertType.ERROR, "Error", "No se pudo reiniciar", ex.getMessage());
+            }
+
+    }*/
 }

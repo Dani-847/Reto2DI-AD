@@ -7,11 +7,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.HBox;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.drk.reto2diad.copia.Copia;
@@ -46,10 +49,14 @@ public class MainController implements Initializable {
     @FXML private ComboBox<String> cmbSoporte;
     @FXML private Button btnGestionUsuarios;
 
+    @FXML private Label lblWinTitle;
+
     private final SimpleSessionService sessionService = new SimpleSessionService();
     private final PeliculaService peliculaService = new PeliculaService();
     private final CopiaService copiaService = new CopiaService();
     private User active;
+
+    private double xOffset, yOffset;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -66,6 +73,7 @@ public class MainController implements Initializable {
 
         String winTitle = "Gestor de copias y películas" + (admin ? " (admin)" : "");
         if (JavaFXUtil.getStage() != null) JavaFXUtil.getStage().setTitle(winTitle);
+        if (lblWinTitle != null) lblWinTitle.setText(winTitle);
 
         cmbEstado.setItems(FXCollections.observableArrayList("bueno","nuevo","regular","dañado"));
         cmbEstado.getSelectionModel().selectFirst();
@@ -245,5 +253,45 @@ public class MainController implements Initializable {
     public void onSalir(ActionEvent actionEvent) {
         sessionService.logout();
         JavaFXUtil.setScene("/org/drk/reto2diad/login-view.fxml");
+    }
+
+    @FXML
+    private void onTitleBarPressed(MouseEvent e) {
+        Stage stage = JavaFXUtil.getStage();
+        if (stage == null) stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        xOffset = stage.getX() - e.getScreenX();
+        yOffset = stage.getY() - e.getScreenY();
+    }
+
+    @FXML
+    private void onTitleBarDragged(MouseEvent e) {
+        Stage stage = JavaFXUtil.getStage();
+        if (stage == null) stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        stage.setX(e.getScreenX() + xOffset);
+        stage.setY(e.getScreenY() + yOffset);
+    }
+
+    @FXML
+    private void onMinimizeWindow(ActionEvent e) {
+        Stage stage = JavaFXUtil.getStage();
+        if (stage == null) stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        stage.setIconified(true);
+    }
+
+    @FXML
+    private void onCloseWindow(ActionEvent e) {
+        Stage stage = JavaFXUtil.getStage();
+        if (stage == null) stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        stage.close();
+    }
+
+    @FXML
+    private void onTitleButtonHoverIn(MouseEvent e) {
+        ((Node) e.getSource()).setOpacity(0.85);
+    }
+
+    @FXML
+    private void onTitleButtonHoverOut(MouseEvent e) {
+        ((Node) e.getSource()).setOpacity(1.0);
     }
 }

@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -24,6 +25,7 @@ public final class JavaFXUtil {
 
     public static void initStage(Stage primary) {
         stage = Objects.requireNonNull(primary, "Stage principal no puede ser null");
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.setResizable(false);
         stage.centerOnScreen();
     }
@@ -35,7 +37,8 @@ public final class JavaFXUtil {
     public static void setScene(String fxmlPath) {
         try {
             Parent root = loadRoot(fxmlPath);
-            stage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
             stage.show();
             stage.centerOnScreen();
         } catch (IOException ex) {
@@ -51,7 +54,6 @@ public final class JavaFXUtil {
             dialog.initModality(modality != null ? modality : Modality.APPLICATION_MODAL);
             dialog.setTitle(title != null ? title : "");
             dialog.setScene(new Scene(root));
-
             dialog.setOnShown(ev -> centerChild(dialog, stage));
             dialog.showAndWait();
         } catch (IOException ex) {
